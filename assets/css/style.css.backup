@@ -1,0 +1,13 @@
+@charset "utf-8";
+
+@import 'core/reset';
+//@import "core/webfonts";
+@import 'core/variables';
+@import '_mixin/index';
+@import 'core/base';
+@import 'core/layout';
+@import '_page/index';
+@import '_partial/header';
+@import '_partial/footer';
+@import '_partial/pagination';
+@import 'core/media';

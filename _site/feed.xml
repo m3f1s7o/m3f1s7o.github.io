@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-06-02T23:58:53+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">M3f1st0 Blog</title><subtitle>Pentesting y Linux</subtitle><author><name>Jimmy Mendoza</name></author><entry><title type="html">Pickle Rick</title><link href="http://localhost:4000/pickle-rick/" rel="alternate" type="text/html" title="Pickle Rick" /><published>2023-04-16T00:00:00+00:00</published><updated>2023-04-16T00:00:00+00:00</updated><id>http://localhost:4000/pickle-rick</id><content type="html" xml:base="http://localhost:4000/pickle-rick/"><![CDATA[<h1 id="pickle-rick">Pickle Rick</h1>
+<p>Enlace: https://tryhackme.com/room/picklerick</p>
+
+<p>Instrucciones:
+Este reto con tema de Rick y Morty requiere que explotes un <strong>servidor web</strong> para encontrar 3 ingredientes que ayudarán a Rick a hacer su poción para transformarse de nuevo en humano de su forma de pepinillo.</p>
+
+<p>Una vez que nos hayamos conectado a través de VPN a la máquina empezaremos con la fase de reconocimiento.</p>
+
+<hr />
+<h2 id="reconocimiento">Reconocimiento</h2>
+
+<h3 id="nmap">nmap</h3>
+<p>Lo primero que haremos es ejecutar nmap para descubrir los puertos del sistema objetivo:</p>
+
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nmap <span class="nt">-n</span> <span class="nt">-Pn</span> &lt;ip&gt; 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/assets/images/maquinas/nmap.png" alt="nmap" /></p>
+
+<p>Vemos que hay dos puertos abiertos, empezaremos por revisar el <strong>servidor web del puerto 80</strong> (<em>las instrucciones nos mencionaban un servidor web</em>).</p>
+
+<h3 id="servidor-web">Servidor web</h3>
+<p><img src="/assets/images/maquinas/web_server.png" alt="Servidor" /></p>
+
+<p>La página principal nos da a entender que habrá un <code class="language-plaintext highlighter-rouge">login</code>, pero al parecer tendremos que encontrar las credenciales por nuestra cuenta.</p>
+
+<p>Ver este servidor web me dio ganas de utilizar <code class="language-plaintext highlighter-rouge">gobuster</code>.</p>
+
+<h3 id="gobuster">gobuster</h3>
+<p>Vamos a enumerar los directorios web de este servidor con la <code class="language-plaintext highlighter-rouge">wordlist</code> <code class="language-plaintext highlighter-rouge">/dirb/common.txt</code>, quizá nos encontremos algo interesante.</p>
+
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>gobuster <span class="nb">dir</span> <span class="nt">-w</span> /usr/share/wordlists/dirb/common.txt <span class="nt">-u</span> http://&lt;ip&gt;
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/assets/images/maquinas/gobuster.png" alt="gobuster" /></p>
+
+<p>Los páginas disponibles (<code class="language-plaintext highlighter-rouge">status: 200</code>) son:</p>
+<ul>
+  <li>index.html</li>
+  <li>robots.txt</li>
+  <li>login.php</li>
+</ul>
+
+<p>Efectivamente hay un login, pero aún necesitamos un usuario y contraseña, tal vez el contenido de <code class="language-plaintext highlighter-rouge">robots.txt</code> sea una de las dos:</p>
+
+<p><img src="/assets/images/maquinas/robots.png" alt="robots.txt" /></p>
+
+<p>No nos quedan más páginas para analizar, pero tal vez revisando el <strong>código fuente</strong> nos sea útil, veamos el de <code class="language-plaintext highlighter-rouge">login.php</code>:</p>
+
+<p><img src="/assets/images/maquinas/login_source.png" alt="login.php" /></p>
+
+<p>Podemos ver que Rick utilizó un comentario para guardar su usuario, por lo tanto, el texto que encontramos en <code class="language-plaintext highlighter-rouge">robots.txt</code> puede que sea nuestra contraseña, intentemos con eso.</p>
+
+<hr />
+<h2 id="ataque">Ataque</h2>
+<p>¡Encontramos las credenciales del login! Ahora parece que tenmos acceso a una <code class="language-plaintext highlighter-rouge">web shell</code>, si introducimos <code class="language-plaintext highlighter-rouge">pwd</code> nos regresa:</p>
+
+<p><img src="/assets/images/maquinas/pwd.png" alt="pwd" /></p>
+
+<p>Por lo tanto, podemos utilizar este formulario para navegar por el sistema y encontrar los ingredientes necesarios. Hay que tener en cuenta que si utilizamos <code class="language-plaintext highlighter-rouge">cd</code>, no habrá un efecto en nuestra ruta actual, por lo que usaremos <strong>rutas absolutas</strong>.</p>
+
+<h3 id="primer-ingrediente">Primer ingrediente</h3>
+<p>Si hacemos un <code class="language-plaintext highlighter-rouge">ls</code>, vemos los archivos que están en el directorio del servidor web, y hay uno sospechoso con nombre <code class="language-plaintext highlighter-rouge">Sup3rS3cretPicl3Ingred.txt</code>. Veamos qué contiene.
+Al parecer <code class="language-plaintext highlighter-rouge">cat</code>, <code class="language-plaintext highlighter-rouge">less</code>, <code class="language-plaintext highlighter-rouge">head</code> y otros comandos están siendo bloqueados en esta web shell, así que usaremos <code class="language-plaintext highlighter-rouge">nl</code> para ver el contenido.</p>
+
+<p><img src="/assets/images/maquinas/first.png" alt="Firs Ingred" /></p>
+
+<p>Así que, aquí tenemos el primero, veamos dónde están los otros. 
+El archivo <code class="language-plaintext highlighter-rouge">clue.txt</code> nos dice que busquemos en todo el sistema, así que revisemos los directorios <code class="language-plaintext highlighter-rouge">home</code>.</p>
+
+<h3 id="segundo-ingrediente">Segundo ingrediente</h3>
+<p>El directorio <code class="language-plaintext highlighter-rouge">/home/rick</code> contiene un archivo llamado <code class="language-plaintext highlighter-rouge">second ingredients</code>, vaya, vaya…</p>
+
+<p><img src="/assets/images/maquinas/second.png" alt="Second Ingred" /></p>
+
+<p>Sólo nos falta uno, sigamos.</p>]]></content><author><name>Jimmy Mendoza</name></author><category term="maquina" /><category term="maquinas" /><category term="linux" /><category term="tryhackme" /><category term="easy_machine" /><category term="pentesting" /><summary type="html"><![CDATA[Máquina de Try Hack Me con temática de Rick & Morty]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/" /><media:content medium="image" url="http://localhost:4000/" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Cheatsheet de Linux</title><link href="http://localhost:4000/linux-cheatsheet/" rel="alternate" type="text/html" title="Cheatsheet de Linux" /><published>2023-04-14T00:00:00+00:00</published><updated>2023-04-14T00:00:00+00:00</updated><id>http://localhost:4000/linux-cheatsheet</id><content type="html" xml:base="http://localhost:4000/linux-cheatsheet/"><![CDATA[<h1 id="comandos-en-linux">Comandos en Linux</h1>
+
+<p>Sintaxis general de los comandos en Linux:</p>
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>comando <span class="nt">-opcion</span> argumentos
+<span class="gp">$</span><span class="w"> </span><span class="nb">ls</span> <span class="nt">-la</span> /etc/  <span class="c"># ejemplo </span>
+<span class="gp">$</span><span class="w"> </span><span class="nb">ls</span> /etc/ <span class="nt">-la</span>  <span class="c"># tambien es posible. menos comun</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<hr />
+<h2 id="buscar-archivos">Buscar archivos</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Descripción</th>
+      <th>Comando</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Busca un archivo en todo el sistema, propiedad del usuario <strong>usuario7</strong> y del grupo <strong>grupo6</strong> con tamaño de 33 bytes</td>
+      <td><code class="language-plaintext highlighter-rouge">find / -type f -size 33c -user usuario7 -group grupo6 2&gt;/dev/null</code></td>
+    </tr>
+    <tr>
+      <td>Busca un archivo en el directorio actual, sin permisos de ejecución, con tamaño de 1033 bytes y muestra su contenido</td>
+      <td><code class="language-plaintext highlighter-rouge">find ./ -type f ! -executable -size 1033c -exec cat {} \;</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="manipulación-de-texto">Manipulación de texto</h2>
+
+<h3 id="cambiar-posición-de-caractéres">Cambiar posición de caractéres</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Descripción</th>
+      <th>Comando</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Rota los caractéres 13 posiciones (cifra Caesar)</td>
+      <td><code class="language-plaintext highlighter-rouge">cat &lt;file&gt; | tr [a-mn-zA-MN-Z] [n-za-mN-ZA-M]</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="eliminar-palabras">Eliminar palabras</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Descripción</th>
+      <th>Comando</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Elimina palabras de menos de <em>x</em> caractéres</td>
+      <td><code class="language-plaintext highlighter-rouge">sed -r '/^.{,&lt;x&gt;}$/d' &lt;archivo&gt;</code></td>
+    </tr>
+    <tr>
+      <td>Elimina palabras sin caractéres especiales</td>
+      <td><code class="language-plaintext highlighter-rouge">sed -r '/[!-/:-@\[-\{-~]+/!d' &lt;archivo&gt;</code></td>
+    </tr>
+    <tr>
+      <td>Elimina palabras sin números</td>
+      <td><code class="language-plaintext highlighter-rouge">sed -ri '/[0-9]+/!d' &lt;archivo&gt;</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<h2 id="administración-de-usuarios-y-grupos">Administración de usuarios y grupos</h2>
+<p>Los siguientes comandos se ejecutan con <code class="language-plaintext highlighter-rouge">sudo</code> o con usuario <code class="language-plaintext highlighter-rouge">root</code>.</p>
+
+<h3 id="usuarios">Usuarios</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Crear</td>
+      <td><code class="language-plaintext highlighter-rouge">useradd -m -shell &lt;/ruta/ala/shell&gt; &lt;nombre&gt;</code></td>
+      <td>Crea un nuevo usuario con su directorio home y se especifica su shell por default</td>
+    </tr>
+    <tr>
+      <td>Cambiar contraseña</td>
+      <td><code class="language-plaintext highlighter-rouge">passwd &lt;usuario&gt;</code></td>
+      <td>Cambia/establece la contraseña para el usuario especificado</td>
+    </tr>
+    <tr>
+      <td>Eliminar</td>
+      <td><code class="language-plaintext highlighter-rouge">userdel &lt;usuario&gt;</code></td>
+      <td>Elimina el usuario especificado</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="grupos">Grupos</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Crear</td>
+      <td><code class="language-plaintext highlighter-rouge">groupadd &lt;nombre&gt;</code></td>
+      <td>Crea un grupo con el nombre especificado</td>
+    </tr>
+    <tr>
+      <td>Agregar usuarios</td>
+      <td><code class="language-plaintext highlighter-rouge">usermod -aG &lt;grupo&gt; &lt;usuario&gt;</code></td>
+      <td>Agrega el usuario al grupo especificado</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<h2 id="iptables">iptables</h2>
+<p>Los siguientes comandos se ejecutan con <code class="language-plaintext highlighter-rouge">sudo</code> o con usuario <code class="language-plaintext highlighter-rouge">root</code>.</p>
+<h3 id="filter-table">Filter Table</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Política de entrada</td>
+      <td><code class="language-plaintext highlighter-rouge">iptables --policy INPUT &lt;ACCEPT/DROP&gt;</code></td>
+      <td>Establece la política de entrada a aceptar/rechazar</td>
+    </tr>
+    <tr>
+      <td>Filtrar por ip</td>
+      <td><code class="language-plaintext highlighter-rouge">iptables -I INPUT -s &lt;ip&gt; -j DROP</code></td>
+      <td>Rechaza la conexión proveniente de la ip especificada</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td><code class="language-plaintext highlighter-rouge">iptables -I OUTPUT -d &lt;ip&gt; -j DROP</code></td>
+      <td>Rechaza las conexiones a la ip especificada</td>
+    </tr>
+    <tr>
+      <td>Filtrar por puerto</td>
+      <td><code class="language-plaintext highlighter-rouge">iptables -I INPUT -p tcp --dport 80 -j DROP</code></td>
+      <td>Rechaza las conexiones <code class="language-plaintext highlighter-rouge">tcp</code> al puerto 80</td>
+    </tr>
+    <tr>
+      <td>Listar cadenas</td>
+      <td><code class="language-plaintext highlighter-rouge">iptables -L --line-numbers</code></td>
+      <td>Lista las cadenas con numeración</td>
+    </tr>
+    <tr>
+      <td>Eliminar cadena</td>
+      <td><code class="language-plaintext highlighter-rouge">iptables -D INPUT &lt;n&gt;</code></td>
+      <td>Elimina la cadena especificada</td>
+    </tr>
+  </tbody>
+</table>]]></content><author><name>Jimmy Mendoza</name></author><category term="cheatsheet" /><category term="linux" /><category term="cheatsheet" /><category term="comandos" /><summary type="html"><![CDATA[Mi recopilación de comandos para el uso de Linux.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/" /><media:content medium="image" url="http://localhost:4000/" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Cheatsheet de MariaDB</title><link href="http://localhost:4000/sql-cheatsheet/" rel="alternate" type="text/html" title="Cheatsheet de MariaDB" /><published>2023-04-14T00:00:00+00:00</published><updated>2023-04-14T00:00:00+00:00</updated><id>http://localhost:4000/sql-cheatsheet</id><content type="html" xml:base="http://localhost:4000/sql-cheatsheet/"><![CDATA[<h1 id="mariadb">MariaDB</h1>
+
+<hr />
+<h2 id="base-de-datos">Base de datos</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Crear</td>
+      <td><code class="language-plaintext highlighter-rouge">CREATE DATABASE nombre_db;</code></td>
+    </tr>
+    <tr>
+      <td>Eliminar</td>
+      <td><code class="language-plaintext highlighter-rouge">DROP DATABASE nombre_db;</code></td>
+    </tr>
+    <tr>
+      <td>Listar</td>
+      <td><code class="language-plaintext highlighter-rouge">SHOW DATABASES;</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<h2 id="tablas">Tablas</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Crear tabla</td>
+      <td><code class="language-plaintext highlighter-rouge">CREATE TABLE nombre_tabla(columna1 INT(5) AUTO_INCREMENT PRIMARY KEY NOT NULL, columna2 VARCHAR(20) NOT NULL DEFAULT "x", columna3 DATE);</code></td>
+      <td>Crea una tabla con tres columnas con sus respectivos tipos de datos</td>
+    </tr>
+    <tr>
+      <td>Eliminar tabla</td>
+      <td><code class="language-plaintext highlighter-rouge">DROP TABLE nombre_tabla;</code></td>
+      <td>Elimina la tabla especificada</td>
+    </tr>
+    <tr>
+      <td>Listar</td>
+      <td><code class="language-plaintext highlighter-rouge">SHOW TABLES;</code></td>
+      <td>Lista todas las tablas de la base de datos</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="modificar">Modificar</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Agregar columna</td>
+      <td><code class="language-plaintext highlighter-rouge">ALTER TABLE nombre_tabla ADD COLUMN nueva_columna DECIMAL(6,2) NOT NULL AFTER columna2;</code></td>
+      <td>Agrega una nueva columna especificando su tipo de dato después de cierta columna</td>
+    </tr>
+    <tr>
+      <td>Cambiar tipo de columna</td>
+      <td><code class="language-plaintext highlighter-rouge">ALTER TABLE nombre_tabla MODIFY columna VARCHAR(20) NOT NULL UNIQUE;</code></td>
+      <td>Altera el tipo de dato que almacena la columna</td>
+    </tr>
+    <tr>
+      <td>Cambiar nombre de columna</td>
+      <td><code class="language-plaintext highlighter-rouge">ALTER TABLE nombre_tabla CHANGE COLUMN nombre nuevo_nombre DECIMAL(6,2) NOT NULL;</code></td>
+      <td>Cambia el nombre de una columna a la vez que se especifica su tipo de dato</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="llaves">Llaves</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Agregar PK</td>
+      <td><code class="language-plaintext highlighter-rouge">ALTER TABLE nombre_tabla ADD PRIMARY KEY(columna);</code></td>
+      <td>Establece como llave primaria una columna de la tabla</td>
+    </tr>
+    <tr>
+      <td>Eliminar PK</td>
+      <td><code class="language-plaintext highlighter-rouge">ALTER TABLE nombre_tabla DROP PRIMARY KEY;</code></td>
+      <td>Elimina la llave primaria de una tabla</td>
+    </tr>
+    <tr>
+      <td>Agregar FK</td>
+      <td><code class="language-plaintext highlighter-rouge">ALTER TABLE nombre_tabla ADD CONSTRAINT FOREIGN KEY(columna) REFERENCES tabla2(col_pk);</code></td>
+      <td>Establece una llave foránea que referencia a la llave primaria de otra tabla</td>
+    </tr>
+    <tr>
+      <td>Eliminar FK</td>
+      <td><code class="language-plaintext highlighter-rouge">ALTER TABLE nombre_tabla DROP FOREIGN KEY col_fk;</code></td>
+      <td>Elimina la llave foránea de una columna</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<h2 id="registros">Registros</h2>
+
+<h3 id="mostrar">Mostrar</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Mostrar todos</td>
+      <td><code class="language-plaintext highlighter-rouge">SELECT * FROM nombre_tabla;</code></td>
+      <td>Muestra todos los registros de la tabla especificada</td>
+    </tr>
+    <tr>
+      <td>Mostrar algunas columnas</td>
+      <td><code class="language-plaintext highlighter-rouge">SELECT col1, col2, col3 FROM nombre_tabla;</code></td>
+      <td>Muestra todos los registros de las columnas especificadas</td>
+    </tr>
+    <tr>
+      <td>Filtrar</td>
+      <td><code class="language-plaintext highlighter-rouge">SELECT * FROM nombre_tabla WHERE columna = "xxx";</code></td>
+      <td>Muestra los registros donde <code class="language-plaintext highlighter-rouge">columna</code> tenga valor <code class="language-plaintext highlighter-rouge">xxx</code></td>
+    </tr>
+    <tr>
+      <td>Ordenar</td>
+      <td><code class="language-plaintext highlighter-rouge">SELECT col1, col2 FROM nombre_tabla ORDER BY col2 ASC LIMIT 0,20;</code></td>
+      <td>Muestra los 20 registros de las columnas especificadas, ordenando en formato ascendente la columna 2</td>
+    </tr>
+    <tr>
+      <td>Agrupar</td>
+      <td><code class="language-plaintext highlighter-rouge">SELECT * FROM nombre_tabla GROUP BY columna;</code></td>
+      <td>Muestra los registros agrupados por la columna especificada</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="actualizar-y-borrar">Actualizar y borrar</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Actualizar</td>
+      <td><code class="language-plaintext highlighter-rouge">UPDATE nombre_tabla SET col1 = "xxx" col2 = "yyy", WHERE col3 = "zzz";</code></td>
+      <td>Actualiza los registros que coincidan con la cláusula <code class="language-plaintext highlighter-rouge">WHERE</code>, <strong>si no se utiliza <code class="language-plaintext highlighter-rouge">WHERE</code> se actualizará toda la tabla</strong></td>
+    </tr>
+    <tr>
+      <td>Borrar</td>
+      <td><code class="language-plaintext highlighter-rouge">DELETE FROM nombre_tabla WHERE identifier = "xxx";</code></td>
+      <td>Borra los registros que coincidan con la condición, al igual que <code class="language-plaintext highlighter-rouge">UPDATE</code> <strong>si no se usa <code class="language-plaintext highlighter-rouge">WHERE</code> se eliminarán todos los registros de la tabla</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<h2 id="importar--exportar">Importar / Exportar</h2>
+<p><strong>Los siguientes comandos se ejecutan desde la terminal del usuario.</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Comando</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Importar</td>
+      <td><code class="language-plaintext highlighter-rouge">mariadb -u usuario -p nombre_bd &lt; script.mysql</code></td>
+      <td>Importa el contenido del script en la bd especificada</td>
+    </tr>
+    <tr>
+      <td>Exportar</td>
+      <td><code class="language-plaintext highlighter-rouge">mysqldump -u usuario -p nombre_bd &gt; bd.mysql</code></td>
+      <td>Exporta el contenido de una bd a un script</td>
+    </tr>
+  </tbody>
+</table>]]></content><author><name>Jimmy Mendoza</name></author><category term="cheatsheet" /><category term="sql" /><category term="cheatsheet" /><category term="comandos" /><category term="bd" /><summary type="html"><![CDATA[Mi recopilación de comandos para usar mariadb o mysql desde la terminal.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/" /><media:content medium="image" url="http://localhost:4000/" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">1x1 Hello Friend</title><link href="http://localhost:4000/1x1-hello-friend/" rel="alternate" type="text/html" title="1x1 Hello Friend" /><published>2023-04-12T00:00:00+00:00</published><updated>2023-04-12T00:00:00+00:00</updated><id>http://localhost:4000/1x1-hello-friend</id><content type="html" xml:base="http://localhost:4000/1x1-hello-friend/"><![CDATA[<h1 id="hello-friend">Hello Friend</h1>
+
+<h2 id="rons-coffee">Ron’s coffee</h2>
+<ul>
+  <li><em>Fiber connection with gigabit speed</em></li>
+  <li>Intercept the traffic of the network</li>
+  <li>Elliot decided to Hack ronnie</li>
+  <li>Tor network to keep the servers anonymous
+    <ul>
+      <li>onion routing protocol</li>
+      <li><em>Whoever is in control of the exit node is also in control of the traffic</em></li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/ron's-coffee.png" alt="Ron's Cofee" /></p>
+
+<h2 id="allsafe">Allsafe</h2>
+<h3 id="concepts">Concepts</h3>
+<ul>
+  <li>Log file</li>
+  <li>RUDY attack</li>
+</ul>
+
+<h2 id="krysta-office">Krysta office</h2>
+<ul>
+  <li>elpscrk (bruteforce). Utiliza la misma herramienta con Ollie y con el novio de Krysta</li>
+</ul>]]></content><author><name>Jimmy Mendoza</name></author><category term="mr_robot" /><category term="series" /><summary type="html"><![CDATA[En este episodio conocemos a Elliot]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/" /><media:content medium="image" url="http://localhost:4000/" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>

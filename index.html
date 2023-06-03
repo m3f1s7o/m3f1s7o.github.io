@@ -1,12 +1,80 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Página WEB de la Ciudad 1</title>
-  </head>
-  <body>
-    <div style="text-align: center; margin-top: 200px;">
-      <h1 style="color: #333; font-family: Arial, sans-serif;">¡Bienvenido a nuestra página web!</h1>
-      <p style="color: #666; font-family: Arial, sans-serif;">Explora lo que tenemos para ofrecerte</p>
+---
+layout: default
+---
+
+
+
+<main aria-label="content" class="main">
+  <div class="container">
+    {% include pinned.html %}
+  <div id="post-list" class="flex-container">
+    <div class="flex-card">
+      <h1>🐧 Linux</h1>
+      <div class="post-preview description">
+        <ul class="item">
+          {% for post in site.categories.linux limit:5 %} {% if
+          post.url %}
+          <li><a class="" href="{{ post.url }}">{{
+              post.title }}</a>
+          </li>
+          {% endif %} {% endfor %}
+        </ul>
+      </div>
     </div>
-  </body>
-</html>
+    <div class="flex-card">
+      <h1>📄 Cheatsheets</h1>
+      <div class="description">
+        <ul class="item">
+          {% for post in site.categories.cheatsheet limit:5 %} {% if
+          post.url %}
+          <li><a class="" href="{{ post.url }}">{{
+              post.title }}</a>
+          </li>
+          {% endif %} {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="flex-card">
+      <h1>🖳 Máquinas</h1>
+      <div class="description">
+        <ul class="item">
+          {% for post in site.categories.maquina limit:5 %} {% if
+          post.url %}
+          <li><a class="" href="{{ post.url }}">{{
+              post.title }}</a>
+          </li>
+          {% endif %} {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="flex-card">
+      <h1>🐟 Mr. Robot</h1>
+      <div class="description">
+      <ul class="item">
+        {% for post in site.categories.mr_robot limit:5 %} {% if
+        post.url %}
+        <li><a class="" href="{{ post.url }}">{{
+            post.title }}</a>
+        </li>
+        {% endif %} {% endfor %}
+      </ul>
+      </div>
+    </div>
+    <div class="flex-card">
+      <h1>🖲️ Desafíos</h1>
+      <div class="description">
+      <ul class="item">
+        {% for post in site.categories.desafio limit:5 %} {% if
+        post.url %}
+        <li><a class="" href="{{ post.url }}">{{
+            post.title }}</a>
+        </li>
+        {% endif %} {% endfor %}
+      </ul>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</main>
+

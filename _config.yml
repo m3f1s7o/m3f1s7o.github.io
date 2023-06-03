@@ -1,0 +1,129 @@
+# global settings
+title: M3f1st0 Blog
+email: 
+description: Pentesting y Linux
+url: https://m3f1s70.github.io
+baseurl:
+permalink: '/:title/'
+safe: false
+port: 4000
+lang: en
+repository: https://github.com/JimmyMendoza/m3f1st0
+timezone: Central Standard Time
+lazyimages: true
+default_img: /assets/images/svg/logo.svg
+header:
+  desktopMode: 'fixed'
+  mobileMode: 'auto'
+
+author:
+  name: Jimmy Mendoza
+  email:
+github_username: JimmyMendoza
+
+# staticman (comments) configuration
+staticman_url: 
+
+# google_site_verification: "ob8_FqKQlIxhp5eRJIvaR-bbkV_6kD7D9l_0TkzxMqc"
+# Seo verification
+verification:
+  google: 
+  yandex: 
+  bing: 
+
+google_analytics:
+  id: 
+  # Google Analytics pageviews report settings
+  pv:
+    proxy_endpoint: 
+    cache_path: false # the local PV cache data, friendly to visitors from GFW region
+
+# Defaults
+defaults:
+  # _posts
+  - scope:
+      path: ''
+      type: posts
+    values:
+      layout: post
+  # _pages
+  - scope:
+      path: '_pages'
+      type: pages
+    values:
+      layout: page
+      permalink: /:title/
+
+collections:
+  pages:
+    output: true
+    sort_by: order
+
+jekyll-archives:
+  enabled: [categories, tags]
+  layouts:
+    category: category
+    tag: tag
+  permalinks:
+    tag: /tags/:name/
+    category: /categories/:name/
+
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: chroma
+    # default_lang: console
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
+keep_files: ['assets']
+service-worker: true
+pwa:
+  sw_src_filepath: sw.js # Optional
+  sw_dest_filename: sw.js # Optional
+  dest_js_directory: assets/js # Required
+  precache_recent_posts_num: 8 # Optional
+  precache_glob_directory: / # Optional
+  precache_glob_patterns: # Optional
+    - '/**/*.{js,json,css}'
+    - '/**/*.{ico,jpg,jpeg,png,svg,webp}'
+    - '/**/*.html'
+  precache_glob_ignores: # Optional
+    - 'sw.js'
+    - 'assets/fonts/**/*'
+
+include: ['_pages']
+plugins:
+  - jekyll-feed
+  - jekyll-paginate
+  - jekyll-assets
+  - jekyll-seo-tag
+  - jekyll-pwa-workbox
+  - jekyll-sitemap
+  - jekyll-archives
+exclude:
+  - gulpfile.babel.js
+  - node_modules
+  - package.json
+  - package-lock.json
+  - postcss.config.js
+  - purgecss.config.js
+  - README.md
+  - src
+  - bin
+  - tailwind.config.js
+  - netlify.toml
+  - LICENSE
+  - Gemfile
+  - .babelrc
+  - .gitignore
+  - sass
+  - scss
+  - validate
+  - gulp_tasks
+  - api_data
+  - ruby-version
+  - .editorconfig
