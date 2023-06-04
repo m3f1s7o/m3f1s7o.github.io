@@ -1,14 +1,14 @@
 # global settings
-title: M3f1st0 Blog
+title: M3f1s7o Blog
 email: 
 description: Pentesting y Linux
-url: https://m3f1s70.github.io
+url: https://m3f1s7o.github.io
 baseurl:
 permalink: '/:title/'
 safe: false
 port: 4000
 lang: en
-repository: https://github.com/JimmyMendoza/m3f1st0
+repository: https://github.com/m3f1s7o/m3f1s7o
 timezone: Central Standard Time
 lazyimages: true
 default_img: /assets/images/svg/logo.svg

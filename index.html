@@ -3,13 +3,12 @@ layout: default
 ---
 
 
-
 <main aria-label="content" class="main">
   <div class="container">
     {% include pinned.html %}
   <div id="post-list" class="flex-container">
     <div class="flex-card">
-      <h1>🐧 Linux</h1>
+      <h1><i class="nf nf-linux-tux"></i> Linux</h1>
       <div class="post-preview description">
         <ul class="item">
           {% for post in site.categories.linux limit:5 %} {% if
@@ -22,7 +21,7 @@ layout: default
       </div>
     </div>
     <div class="flex-card">
-      <h1>📄 Cheatsheets</h1>
+      <h1><i class="nf nf-md-bottle_tonic_skull_outline"></i> Cheatsheets</h1>
       <div class="description">
         <ul class="item">
           {% for post in site.categories.cheatsheet limit:5 %} {% if
@@ -35,7 +34,7 @@ layout: default
       </div>
     </div>
     <div class="flex-card">
-      <h1>🖳 Máquinas</h1>
+      <h1><i class="nf nf-linux-kali_linux"></i> Máquinas</h1>
       <div class="description">
         <ul class="item">
           {% for post in site.categories.maquina limit:5 %} {% if
@@ -48,7 +47,7 @@ layout: default
       </div>
     </div>
     <div class="flex-card">
-      <h1>🐟 Mr. Robot</h1>
+      <h1><i class="nf nf-md-guy_fawkes_mask"></i> Mr. Robot</h1>
       <div class="description">
       <ul class="item">
         {% for post in site.categories.mr_robot limit:5 %} {% if
@@ -61,10 +60,10 @@ layout: default
       </div>
     </div>
     <div class="flex-card">
-      <h1>🖲️ Desafíos</h1>
+      <h1><i class="nf nf-dev-cisco"></i> Redes</h1>
       <div class="description">
       <ul class="item">
-        {% for post in site.categories.desafio limit:5 %} {% if
+        {% for post in site.categories.redes limit:5 %} {% if
         post.url %}
         <li><a class="" href="{{ post.url }}">{{
             post.title }}</a>
