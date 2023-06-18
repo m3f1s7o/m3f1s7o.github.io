@@ -454,8 +454,16 @@
       <div class="toc-content" id="toc-content-auto">
         <nav id="TableOfContents">
           
-          <ul class="menu-list"><li><a href="#hello-friend">Hello Friend</a><ul><li><a href="#rons-coffee">Ron’s coffee</a></li><li><a href="#allsafe">Allsafe</a><ul><li><a href="#concepts">Concepts</a></li>
-  </ul></li><li><a href="#krysta-office">Krysta office</a></li>
+          <ul class="menu-list"><li><a href="#hello-friend">Hello Friend</a><ul><li><a href="#el-café-de-ron">El café de Ron</a><ul><li><a href="#conexión-de-fibra-óptica">Conexión de fibra óptica</a></li><li><a href="#interceptar-el-tráfico-de-la-red">Interceptar el tráfico de la red</a></li><li><a href="#servidores">Servidores</a></li><li><a href="#red-tor">Red Tor</a><ul><li><a href="#protocolo-onion">Protocolo onion</a></li>
+  </ul></li><li><a href="#en-resumen">En resumen…</a></li>
+  </ul></li><li><a href="#allsafe">Allsafe</a><ul><li><a href="#log-file">Log file</a></li><li><a href="#rudy-attack">RUDY attack</a><ul><li><a href="#ataque-dos">Ataque DoS</a></li>
+  </ul></li>
+  </ul></li><li><a href="#la-oficina-de-krysta">La oficina de Krysta</a><ul><li><a href="#ataque-de-fuerza-bruta">Ataque de fuerza bruta</a><ul><li><a href="#wordlist">Wordlist</a></li>
+  </ul></li>
+  </ul></li><li><a href="#ejecutivos-de-e-corp">Ejecutivos de E-Corp</a><ul><li><a href="#linux">Linux</a><ul><li><a href="#gnome-y-kde">Gnome y KDE</a></li>
+  </ul></li>
+  </ul></li><li><a href="#ataque-a-allsafe">Ataque a Allsafe</a><ul><li><a href="#ataque-ddos">Ataque DDoS</a></li>
+    </ul></li>
     </ul></li>
     </ul>
         </nav>
@@ -477,12 +485,12 @@
           &nbsp;<svg class="icon icon-calculator">
             <use xlink:href="#icon-calculator"></use>
           </svg>&nbsp; 
-          86
+          1543
            palabras &nbsp;
           <svg class="icon icon-clock">
             <use xlink:href="#icon-clock"></use>
           </svg>&nbsp;
-          1 minutos 
+          9 minutos 
           &nbsp;
 
 
@@ -505,32 +513,139 @@
         
         <h1 id="hello-friend">Hello Friend</h1>
 
-<h2 id="rons-coffee">Ron’s coffee</h2>
+<h2 id="el-café-de-ron">El café de Ron</h2>
+<h3 id="conexión-de-fibra-óptica">Conexión de fibra óptica</h3>
+<p>Esta escena es una de mis favoritas, Elliot está en <em>El Café de Ron</em>, entra Ron, el dueño del local, y Elliot lo confronta. Primero le dice que la razón que va ahí es porque el Wi-Fi es rápido, tiene <strong>conexión de fibra óptica con velocidades gigabit</strong>.</p>
+
+<p>En el presente muchas de nuestras casas ya cuentan con conexión de fibra óptica, pero para el año en el que salió la serie (2015), la fibra óptica aún era una novedad. Justo esto fue lo que le pareció extraño a Elliot, por lo que procedió a interceptar el tráfico de la red.</p>
+
+<h3 id="interceptar-el-tráfico-de-la-red">Interceptar el tráfico de la red</h3>
+<p>La serie no dice con qué herramienta Elliot hizo esto, pero algunas de las herramientas que se pueden usar para este fin son <code class="language-plaintext highlighter-rouge">wireshark</code> y <code class="language-plaintext highlighter-rouge">tcpdump</code>. Este proceso consiste en estar conectado a una red y con una de las herramientas mencionadas empezar a <em>escuchar</em> las comunicaciones que viajan por esa red. Es como si estando en un parque te enfocas en las dos personas que están sentadas conversando y agudizas tu oído para captar todo lo que están diciendo.</p>
+
+<p>Interceptar/escuchar el tráfico de una red nos da la oportunidad de verificar que la red está en buenas condiciones, notar tráfico inusual o, incluso, espiar.</p>
+
+<p>A continuación, Elliot dice que decidió <em>hackear</em> a Ron, no se especifica qué hizo exactamente, pero es probable que con el análisis del tráfico de la red diera con el sitio que Ron estaba operando, <em>Los chicos de Plato</em>, ingresara (de alguna forma) como administrador y copiara todo el contenido del sitio como evidencia, incluso los correos.</p>
+
+<h3 id="servidores">Servidores</h3>
+<p>Un servidor es una computadora dedicada a proveer <em>recursos</em> a otras computadoras. El tipo de servidor que se menciona aquí es un <strong>servidor web</strong>, el cual provee el contenido de Los chicos de Plato. Si el servidor es cerrado y borrado, este sitio y todo su contenido dejan de existir.</p>
+
+<p>La razón de que Elliot haya confrontado a Ron es porque si lo hacía de manera remota, había la posibilidad que Ron huyera y cerrara los servidores de su sitio.</p>
+
+<h3 id="red-tor">Red Tor</h3>
+<p>Tor es una <a href="../la-red-mas-simple#Red">red</a> que funciona de forma especial: está enfocada a <strong>anonimizar a sus usuarios</strong>. Quienes se conectan a esta red quieren dificultar el proceso de ser identificados. La <a href="https://www.youtube.com/watch?v=79m7mX3rC8Q">red Tor</a> utiliza el protocolo <code class="language-plaintext highlighter-rouge">onion</code> para lograr enmascarar a sus usuarios.</p>
+
+<p><img src="/assets/images/posts/red_tor.png" alt="Red Tor" /></p>
+
+<h4 id="protocolo-onion">Protocolo onion</h4>
+<p>Este protocolo trabaja por capas (por eso el <em>onion</em>), con estas capas logra ofuscar la identificación de los usuarios y encriptar sus comunicaciones.</p>
+
+<p>Pese a todo esto, como Elliot dice: <em>la red Tor no es tan anónima como crees</em>. Vamos, no es una herramienta mágica que te hace invisible, aún en su diseño tiene algunos puntos débiles. Si alguien analiza el tamaño de los mensajes y la frecuencia de la comunicación entre el usuario y en nodo de entrada, y aparte tiene acceso al nodo de salida, donde las comunicaciones ya no están encriptadas por la red Tor, es posible conocer el tráfico del usuario (justo lo que conocía Elliot).</p>
+
+<h3 id="en-resumen">En resumen…</h3>
+<p>Resumiendo lo que Elliot hizo en esta escena:</p>
+<ol>
+  <li>Le gustaba la velocidad de la red del café</li>
+  <li>Notó tráfico raro</li>
+  <li>Capturó y analizó el tráfico de la red</li>
+  <li>Encontró el nodo de salida de la red Tor y descubrió sus servidores de Ron</li>
+  <li>Ingresó a los servidores de Los chicos de Plato</li>
+  <li>Descargó todo su contenido y correos</li>
+  <li>Hizo una denuncia y confrontó a Ron en lo que llegaba el FBI</li>
+</ol>
+
+<p><img src="/assets/images/posts/ron's_coffee.png" alt="El café de Ron" /></p>
+
+<hr />
+
+<h2 id="allsafe">Allsafe</h2>
+
+<h3 id="log-file">Log file</h3>
+<p>Los <code class="language-plaintext highlighter-rouge">log files</code> son archivos en lo que se lleva un registro de todas las acciones realizadas en un sistema. Este tipo de archivos son muy importantes para los administradores del sistema porque cuando ocurre un ataque o una brecha de seguridad, analizar los log files puede dar pistas de cómo ocurrió dicho ataque.</p>
+
+<p>Mirando el log file del servidor Elliot pudo determinar que el ataque que sufrieron fue un ataque <a href="https://www.cloudflare.com/learning/ddos/ddos-attack-tools/r-u-dead-yet-rudy/"><code class="language-plaintext highlighter-rouge">RUDY</code></a>.</p>
+
+<h3 id="rudy-attack">RUDY attack</h3>
+<p><strong>R U Dead Yet?</strong> (¿ya estás muerto?) es un ataque de tipo DoS (abajo explicado), el cual explota servidores que reciben información de formularios a través de enviar respuestas muy largas de forma muy lenta. El servidor tiene que esperar a que llegue toda la respuesta, por lo que estará siendo realentizado y no podrá atender a otros usuarios de forma efectiva. Es como si al pagar en la caja del supermercado la cuenta fuera de $1,000, y tú ingresaras una moneda de $1 cada diez segundos.</p>
+
+<h4 id="ataque-dos">Ataque DoS</h4>
+<p>Los ataques de <em>Denegación de Servicio</em> (Denial of Service) son ataques que son muy comunes en la actualidad. Su propósito principal es <strong>impactar negativamente en el desempeño de un servidor</strong> para hacerlo lento, impedir que usuarios legítimos accedan a él y, en casos extremos, dejarlo inoperativo.</p>
+
+<p>El ataque RUDY es un ejemplo de ataque DoS porque su meta es ocupar al servidor con peticiones lentas e inutiles, sin embargo hay más formas de ataques DoS, uno de los más comunes es el <a href="./#ataque-ddos"><code class="language-plaintext highlighter-rouge">DDoS</code></a>.</p>
+
+<hr />
+<h2 id="la-oficina-de-krysta">La oficina de Krysta</h2>
+
+<h3 id="ataque-de-fuerza-bruta">Ataque de fuerza bruta</h3>
+<p>Cuando conocemos por primera vez a Krysta sabemos que Elliot tiene acceso a sus cuentas de redes sociales y de correo, ¿cómo logró esto? Pues, al parecer utilizó una herramienta para hacerle fuerza bruta a sus cuentas. De hecho, en otras escenas podemos ver que se llama <code class="language-plaintext highlighter-rouge">elpscrk</code> (¿elliot-password-crack?) y la utiliza para obtener las contraseñas de Ollie y del novio de Krysta. Éste método de obtener contraseñas es conocido como <strong>ataque de fuerza bruta</strong> y consiste en probar miles e incluso millones de posibilidades hasta encontrar la correcta.</p>
+
+<p>Esta herramienta funciona recibiendo una lista de palabras (<code class="language-plaintext highlighter-rouge">wordlist</code>), que son las posibles contraseñas para el usuario de Krysta, la wordlist que utiliza Elliot contiene 9,875,894 posibles contraseñas, la contraseña correcta la encuentra en 24 segundos.</p>
+
+<p>En la actualidad este ataque ya no es tan fácil de hacer para sitios online, porque los <code class="language-plaintext highlighter-rouge">firewalls</code> detectan el ataque y lo bloquean, sin embargo aún es útil con distintos enfoques. Y también agregar que, en la vida real este tipo de ataques requieren de un gran poder de procesamiento y generalmente toman horas en llevarse a cabo.</p>
+
+<h4 id="wordlist">Wordlist</h4>
+<p>Una wordlist consiste en una lista de posibles credenciales (generalmente) con las que se intentará probar acceder a un sistema. Estas wordlists se pueden encontrar en línea recopiladas de bases de datos filtradas en el pasado como las SecLists, pero también se pueden <strong>crear especialmente para un objetivo</strong>, como lo hace Elliot para el novio de Krysta. Para ello hay que conocer ciertos datos de nuestro objetivo y con herramientas como <code class="language-plaintext highlighter-rouge">hydra</code> se pueden generar permutaciones de estas palabras, obteniendo una wordlist gigantesca si es necesario.</p>
+
+<p><img src="/assets/images/posts/elpscrk.png" alt="elpscrk" /></p>
+
+<hr />
+<h2 id="ejecutivos-de-e-corp">Ejecutivos de E-Corp</h2>
+
+<h3 id="linux">Linux</h3>
+<p>Cuando los ejecutivos de E-Corp visitan Allsafe, <strong>Tyrell Wellick</strong> le dice a Elliot que al igual que él, también <strong>utiliza Linux</strong>. Y como Linux es generalmente utilizado por personas con un conocimiento más avanzado, es sorpresa para Elliot.</p>
+
+<p>Linux es un sistema opertativo que a diferencia de Windows es de código abierto y gratuito, esto lo hace altamente configurable y adaptable, por ello existen muchas variaciones de Linux. <strong>Kali Linux y Parrot OS</strong> son dos <em>versiones</em> de este sistema operativo y están pensado específicamente para <strong>hacking y pentesting</strong>. De hecho, en la serie Elliot utiliza Kali para sus ataques.</p>
+
+<h4 id="gnome-y-kde">Gnome y KDE</h4>
+<p>También Wellick menciona <em>Gnome</em> y <em>KDE</em>, éstos son dos entornos de escritorio muy populares en Linux, básicamente lo que hacen es darle una apariencia común a las ventanas, íconos y más en el sistema operativo. Wellick es más de KDE y, a decir verdad, yo también.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ventanas de Gnome</th>
+      <th>Ventanas de KDE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="https://i.stack.imgur.com/YovBy.jpg" alt="gnome" /></td>
+      <td><img src="https://news-cdn.softpedia.com/images/news2/beautify-your-kde-plasma-5-desktop-environment-with-freshly-ported-adapta-theme-517792-2.jpg" alt="kde" /></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<h2 id="ataque-a-allsafe">Ataque a Allsafe</h2>
+
+<h3 id="ataque-ddos">Ataque DDoS</h3>
+<p>Los ataques <a href="./#ataque-dos"><code class="language-plaintext highlighter-rouge">DoS</code></a> son efectivos pero también son fáciles de detectar y bloquear por los <code class="language-plaintext highlighter-rouge">firewalls</code> de los servidores, si se detectan patrones de denegación de servicio proviniendo de una cierta dirección <code class="language-plaintext highlighter-rouge">IP</code>, se bloquea esa dirección y problema solucionado.
+Por este motivo los atacantes han ideado ataques más complejos y más efectivos. El <strong>Distributed Denial of Service</strong> (Denegación de Servicio Distribuido) es la evolución de DoS. Con este ataque se utilizan <strong>miles o millones de dispositivos</strong> para hacer peticiones a servidores, saturandolos con tanto tráfico. De esta forma un firewall ya no es tan efectivo para diferenciar entre un atacante y un usuario legítimo que trata de utilizar el servidor.</p>
+
+<p>Para conocer más sobre los ataques DDoS y ver un caso real, mira el siguiente <a href="https://youtu.be/_IPeU2upbaw">vídeo</a>.</p>
+
+<p><img src="/assets/images/posts/rebooting_server.png" alt="Reinicio del servidor" />
+La versión</p>
+
 <ul>
-  <li><em>Fiber connection with gigabit speed</em></li>
-  <li>Intercept the traffic of the network</li>
-  <li>Elliot decided to Hack ronnie</li>
-  <li>Tor network to keep the servers anonymous
+  <li>DDoS attack
     <ul>
-      <li>onion routing protocol</li>
-      <li><em>Whoever is in control of the exit node is also in control of the traffic</em></li>
+      <li>Reconfigure DNS</li>
+      <li>Reboot the servers</li>
+      <li>They are inside the network</li>
+      <li>Security protocols</li>
+      <li>Load sharing</li>
+      <li>Redirect traffic</li>
+    </ul>
+  </li>
+  <li>Rootkit
+    <ul>
+      <li>Serverfarm</li>
+      <li>Backup server</li>
+      <li>Autoswitch</li>
+      <li>Switch DNS</li>
     </ul>
   </li>
 </ul>
 
-<p><img src="/assets/images/ron's-coffee.png" alt="Ron's Cofee" /></p>
-
-<h2 id="allsafe">Allsafe</h2>
-<h3 id="concepts">Concepts</h3>
-<ul>
-  <li>Log file</li>
-  <li>RUDY attack</li>
-</ul>
-
-<h2 id="krysta-office">Krysta office</h2>
-<ul>
-  <li>elpscrk (bruteforce). Utiliza la misma herramienta con Ollie y con el novio de Krysta</li>
-</ul>
 
       </div>
       <div class="post-footer" id="post-footer">
@@ -623,8 +738,7 @@
             <div class="tags">
               
               <a class="tag-link" href="/tags/series/"
-                title="series tag">series</a>
-              
+                                  title="series tag"> series </a>
             </div>
             
           </section>
@@ -692,7 +806,7 @@
 <script type=text/javascript>window.config={
   "code": {
     "copyTitle": "Copiar",
-    "maxShownLines": 10
+    "maxShownLines": 50
   },
   "search": {
     "highlightTag": "em",

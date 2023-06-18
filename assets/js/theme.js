@@ -672,7 +672,7 @@ var Util = (function () {
                     if (
                       ((0 > e.config.code.maxShownLines ||
                         s.split("\n").length <
-                          e.config.code.maxShownLines + 2) &&
+                          e.config.code.maxShownLines + 10) &&
                         t.classList.add("open"),
                       e.config.code.copyTitle)
                     )

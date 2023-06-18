@@ -60,6 +60,20 @@ layout: default
       </div>
     </div>
     <div class="flex-card">
+      <h1><i class="nf nf-cod-terminal_bash"></i> Programación</h1>
+      <div class="description">
+      <ul class="item">
+        {% for post in site.categories.programacion limit:5 %} {% if
+        post.url %}
+        <li><a class="" href="{{ post.url }}">{{
+            post.title }}</a>
+        </li>
+        {% endif %} {% endfor %}
+      </ul>
+      </div>
+    </div>
+
+    <div class="flex-card">
       <h1><i class="nf nf-dev-cisco"></i> Redes</h1>
       <div class="description">
       <ul class="item">

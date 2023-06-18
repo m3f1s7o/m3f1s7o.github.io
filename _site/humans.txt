@@ -2,15 +2,15 @@
 Jimmy Mendoza, Pentesting y Linux
 Contact: 
 Twitter: @
-From: İstanbul, Turkiye
+From: Mexico
 
 
 /* SITE */
-Last Updated: 04/06/2023
+Last Updated: 18/06/2023
 Language: Turkish
 Tools: Ruby, Sass, Jekyll, Node
 Theme: Minel Jekyll Theme
-IDE: Vscode
+IDE: Vim
 
 /* THANKS */
 Name: babayorum-bot

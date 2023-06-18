@@ -116,7 +116,7 @@ layout: default
             <div class="tags">
               {% for tag in page.tags %}
               <a class="tag-link" href="{{ site.baseurl }}/tags/{{ tag | slugify | url_encode }}/"
-                title="{{ tag | downcase }} tag">{{- tag -}}</a>
+                                  title="{{ tag | downcase }} tag"> {{ tag }} </a>{%- unless forloop.last -%} <b>·</b> {%- endunless -%}
               {% endfor %}
             </div>
             {% endif %}

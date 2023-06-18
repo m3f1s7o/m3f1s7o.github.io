@@ -5,7 +5,7 @@
 {{ site.author.name }}, {{ site.description }}
 Contact: {{ site.author.email }}
 Twitter: @{{ site.author.twitter }}
-From: İstanbul, Turkiye
+From: Mexico
 
 
 /* SITE */
@@ -13,7 +13,7 @@ Last Updated: {{ site.time | date:"%d/%m/%Y" }}
 Language: Turkish
 Tools: Ruby, Sass, Jekyll, Node
 Theme: Minel Jekyll Theme
-IDE: Vscode
+IDE: Vim
 
 /* THANKS */
 Name: babayorum-bot

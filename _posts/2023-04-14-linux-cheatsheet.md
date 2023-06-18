@@ -3,7 +3,7 @@ layout: post
 title: Cheatsheet de Linux
 description: Mi recopilación de comandos para el uso de Linux.
 image: ""
-category: cheatsheet
+category: [cheatsheet, linux]
 tags: [linux, cheatsheet, comandos]
 comments: false
 edit_url: false
