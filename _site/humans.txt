@@ -6,7 +6,7 @@ From: Mexico
 
 
 /* SITE */
-Last Updated: 18/06/2023
+Last Updated: 20/06/2023
 Language: Turkish
 Tools: Ruby, Sass, Jekyll, Node
 Theme: Minel Jekyll Theme

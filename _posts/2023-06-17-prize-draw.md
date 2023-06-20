@@ -12,7 +12,7 @@ toc: true
 
 # Prize Draw
 
-[Enlace al kata](https://www.codewars.com/kata/5616868c81a0f281e500005c)
+[Enlace al kata](https://www.codewars.com/kata/5616868c81a0f281e500005c): 5/5 🖤
 
 > En este problema se nos pide encontrar el nombre ganador de un sorteo, como datos de entrada tenemos una lista de nombres, una lista de _pesos_ y una posición que será el nombre seleccionado. Para cada nombre tendremos que sumar el valor de todas sus letras, sumar la longitud del nombre y por último multiplicar por el peso que le corresponde de la lista, el resultado es un número ganador para cada nombre. Con todos los números ganadores obtenidos tendremos que ordenarlos de mayor a menor (si hay dos números ganadores iguales se ordenará además alfabéticamente). Por último, devolveremos al nombre en la posición solicitada.
 
@@ -63,6 +63,8 @@ La función debe regresar: "PauL"
 
 ---
 ## Mi solución
+Esta solución la fui desarrollando en la marcha, pues realmente sólo sabía lo básico sobre variables, condicionales, funciones y ciclos, pero sin recordar al cien por ciento la sintáxis. Consulté bastantes páginas para saber cómo se hacía lo que tenía en mente, lo que me daba errror y sobre como refactorizar mi código.
+
 
 ### Algoritmo
 
@@ -146,5 +148,64 @@ charValue () {
 
 validate "$1" "$2" "$3"
 ``` 
+
+Cuando finalicé me sentí como si hubiera escrito el código para echar a andar un transbordador espacial, y aunque sabía que seguramente había soluciones mucho mejores, me gustó el Kata porque fue mi primer reto real en bash.
+
+---
+## Otras soluciones
+
+[Solución](https://www.codewars.com/kata/reviews/59e1e45d456cd3977c0002e5/groups/62f9ed22885ae200011b7fec) propuesta por el usuario [DEV0001](https://www.codewars.com/users/DEV0001). **Código comentado por mí**.
+
+```bash
+#!/bin/bash
+
+rank () {
+  # separa los nombres y los pesos
+  IFS="," read -r -a names <<< "$1"
+  IFS="," read -r -a weights <<< "$2"
+  rank="$3"
+
+  # hace las validaciones
+  [[ ${#names[@]} -eq 0 ]] && echo "No participants" && exit
+  [[ ${rank} -gt ${#names[@]} ]] && echo "Not enough participants" && exit
+
+  # recorre todos los nombres
+  for i in ${!names[@]}; do
+	# obtiene la longitud del nombre
+    let res=${#names[$i]}
+	# recorre los carácteres del nombre
+    for chr in $(echo "${names[$i]}" | tr [A-Z] [a-z] | grep . -o); do
+	  # encuentra el valor del carácter
+      let res+=$(eval echo {a..${chr}} | tr " " "\n" | wc -l)
+    done
+	# obtiene el número ganador
+    let res*=${weights[$i]}
+    # da la cadena con el número ganador y el nombre
+    echo "${res} ${names[$i]}"
+  done \  
+  # termina el ciclo y manda la salida al comando sort, ordena por la primer y segunda columna y manda la salida a awk
+  # awk obtiene la posición deseada e imprime el nombre
+  | sort -k 1nr,2 | awk -v "n=${rank}" '(NR==n){print $2}'
+}
+rank "$1" "$2" "$3"
+```
+
+Esta solución es la más corta y fácil de entender que encontré. Da solución al problema de una forma **elegante** y **ordenada**.
+
+
+---
+## Lo que aprendí
+
+### En mi código
+- [Diccionarios en bash](https://www.howtogeek.com/730243/what-are-bash-dictionaries-on-linux-and-how-do-you-use-them/)
+- [Separar cadenas](http://stackoverflow.com/questions/918886/ddg#918931)
+- [Ordenar múltiples columnas](https://linuxopsys.com/topics/sort-in-linux-by-multiple-columns) (originalmente me ayudé de ChatGPT)
+- Mucha sintáxis
+
+### En el código de DEV0001
+- Se pueden utilizar sólo [corchetes dobles](https://www.baeldung.com/linux/bash-single-vs-double-brackets) para validaciones o tests
+- awk es bastante útil para procesar cadenas
+- Algunas otras soluciones ingeniosas
+
 
 
